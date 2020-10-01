@@ -14,3 +14,8 @@
 # If you implemented all the commands you can build and run the image.
 # You should see an output with all the files from the directory "/etc" within the container.
 # Hint: if you cannot find the image locally, try binding the container port 80 to your machine's port 80.
+
+FROM gcr.io/distroless/python3
+WORKDIR /app
+CMD ["hello.py", "/etc/"]
+COPY . .
