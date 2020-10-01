@@ -1,9 +1,9 @@
-FROM golang:alpine
+FROM golang:alpine AS build
 WORKDIR /app
 COPY . /app
 # creates the executable named goapp
 RUN cd /app && go build -o goapp
-CMD [ "./goapp" ]
+# CMD [ "./goapp" ]
 
 # If you run docker build on this file, you should notice that it is quite big. Especially for a small hello world app.
 # Try to answer why the image is so big and write the size down. Google is your friend :D
@@ -23,3 +23,8 @@ CMD [ "./goapp" ]
 # In the second part of the multi staged build, you should try and copy the executable and run it.
 # You should use gcr.io/distroless/static as the second base.
 # When you build and run the image, what size difference do you end up with?
+
+FROM gcr.io/distroless/static
+WORKDIR /app
+COPY --from=build /app/goapp .
+CMD ["./goapp"]
