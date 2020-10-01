@@ -12,6 +12,6 @@ spec:
         - name: ENV_CITY
           valueFrom:
             configMapKeyRef:
-              name: cm
+              name: my-city
               key: city
   restartPolicy: Never
