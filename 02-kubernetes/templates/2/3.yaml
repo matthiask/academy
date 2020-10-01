@@ -1,85 +1,95 @@
-apiVersion: apps/v1beta
-# Use the kind Deployment
-
+apiVersion: apps/v1beta1
+kind: Deployment
 metadata:
   name: db
-  # Label the deployment with app: words-db
-
+  labels:
+    app: words-db
 spec:
   template:
     metadata:
-      # label the pods with app: words-db
-
+      labels:
+        app: words-db
     spec:
       containers:
-      # name the pods db
-      - name: 
-        # use the image dockersamples/k8s-wordsmith-db
-
+      - name: db
+        image: dockersamples/k8s-wordsmith-db
         ports:
         - containerPort: 5432
           name: db
 ---
 apiVersion: v1
-# Use the kind service
+kind: Service
 metadata:
   name: db
-  # Label this service words-db
-
+  labels:
+    app: words-db
 spec:
   ports:
     - port: 5432
       targetPort: 5432
       name: db
-  # Select the pods from the deployment above. Use the app: selector for this!
-  
-  # Use the type ClusterIP
-
+  selector:
+    app: words-db
+  type: ClusterIP
 ---
 #######################################################
 # Use the right apiversion and kind for deploying the second microservice
-
-
+apiVersion: apps/v1beta1
+kind: Deployment
 metadata:
   name: words
-  # Label it with "app: words-api"
-  
-
+  labels:
+    app: words-api
 spec:
-  # We need 5 different replicas of the container
-  
+  replicas: 5
   template:
     metadata:
-      # Label the pods with "words-api"
-
-
+      labels:
+        app: words-api
     spec:
       containers:
         # name the pods "words" and use the image dockersamples/k8s-wordsmith-api
-      - 
-
-        ports:
-        - containerPort: 8080
-          name: api
+        - name: words
+          image: dockersamples/k8s-wordsmith-api
+          ports:
+          - containerPort: 8080
+            name: api
 ---
 # Use the right apiversion and type for a service
-
+apiVersion: v1
+kind: Service
 metadata:
   name: words
-  # Label it with "app: words-api"
-
-
+  labels:
+    app: words-api
 spec:
   ports:
     - port: 8080
       targetPort: 8080
       name: api
-  # Use a the selector from the deployment above
-
-
-  # Use the type ClusterIP
-  
+  selector:
+    app: words-api
+  type: ClusterIP
 ---
+apiVersion: apps/v1beta1
+kind: Deployment
+metadata:
+  name: web
+  labels:
+    app: words-web
+spec:
+  template:
+    metadata:
+      labels:
+        app: words-web
+    spec:
+      containers:
+        - image: dockersamples/k8s-wordsmith-web
+          name: web
+          ports:
+            - containerPort: 80
+              name: words-web
+
 #######################################################
 # Write your own Deployment object with the following attributes
 #       name = web
@@ -101,3 +111,17 @@ spec:
 #       ports: Container(Target) Port 80 to port 8081
 #       name port web
 
+apiVersion: v1
+kind: Service
+metadata:
+  name: web
+  labels:
+    app: words-web
+spec:
+  type: LoadBalancer
+  selector:
+    app: words-web
+  ports:
+    - port: 8081
+      targetPort: 80
+      name: web

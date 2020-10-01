@@ -1,19 +1,19 @@
-apiVersion: apps/v1                   #
-kind: Deployment                      #
-metadata:                             #
-  name: nginx-deployment              #
-spec:                                 #
-  selector:                           #
-    matchLabels:                      #
-      app: nginx                      #
-  replicas: 1                         #
-  template:                           #
-    metadata:                         #
-      labels:                         #
-        app: nginx                    #
-    spec:                             #
-      containers:                     #
-      - name: nginx                   #
-        image: nginx:1.14.2           #
-        ports:                        #
-        - containerPort: 80           #
+apiVersion: apps/v1           # version ...
+kind: Deployment              # object type (Deployment)
+metadata:                     #
+  name: nginx-deployment      # arbitrary name
+spec:                         # Spec: The desired state
+  selector:                   #
+    matchLabels:              #
+      app: nginx              # the deployment matches "app: nginx" labels
+  replicas: 3                 #
+  template:                   #
+    metadata:                 #
+      labels:                 #
+        app: nginx            # ... here's such a label "app: nginx"
+    spec:                     #
+      containers:             #
+      - name: nginx           # the deployment has a single container named "nginx"
+        image: nginx:1.14.2   # it uses 1.14.2
+        ports:                #
+        - containerPort: 80   # expose port 80 please
